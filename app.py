@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template_string
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -24,27 +25,28 @@ html_template = """
         <div class="card">
             <div class="card-body">
                 {% if requests %}
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-striped">
                         <thead class="thead-light">
                             <tr>
-                                <th scope="col">Path & Headers</th>
                                 <th scope="col">Payload</th>
+                                <th scope="col">Headers</th>
                             </tr>
                         </thead>
                         <tbody>
                         {% for req in requests %}
                             <tr>
-                                <td>
-                                    <strong>Path:</strong> {{ req.path }} <br/>
-                                    <strong>Headers:</strong> 
-                                    <ul>
-                                        {% for key, value in req.headers.items() %}
-                                            <li><strong>{{ key }}:</strong> {{ value }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </td>
+                                <td colspan="2" class="font-monospace">[{{ req.date.strftime('%Y-%m-%d %H:%M:%S') }}] => {{ req.path }}</div></td>
+                            </tr>
+                            <tr>
                                 <td>
                                     <pre>{{ req.data }}</pre>
+                                </td>
+                                <td>
+                                    <div class="font-monospace">
+                                        {% for key, value in req.headers.items() %}
+                                            <div><strong>{{ key }}:</strong> {{ value }}</div>
+                                        {% endfor %}
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -79,7 +81,8 @@ def receive_post(subpath):
     received_requests.append({
         'headers': headers,
         'data': data,
-        'path': path
+        'path': path,
+        'date': datetime.now()
     })
 
     if (len(received_requests) > 50):
