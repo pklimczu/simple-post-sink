@@ -20,29 +20,41 @@ html_template = """
 </head>
 <body class="bg-light">
     <div class="container mt-5">
-        <h1 class="mb-4">Received POST Requests (refreshes every 5 seconds)</h1>
+        <h1 class="mb-4">Received POST Requests</h1>
         <div class="card">
             <div class="card-body">
                 {% if requests %}
-                    <ul class="list-group">
-                    {% for req in requests %}
-                        <li class="list-group-item">
-                            <strong>Path:</strong> {{ req.path }} <br/>
-                            <strong>Headers:</strong> 
-                            <ul>
-                                {% for key, value in req.headers.items() %}
-                                    <li><strong>{{ key }}:</strong> {{ value }}</li>
-                                {% endfor %}
-                            </ul>
-                            <strong>Payload:</strong>
-                            <pre>{{ req.data }}</pre>
-                        </li>
-                    {% endfor %}
-                    </ul>
+                    <table class="table table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Path & Headers</th>
+                                <th scope="col">Payload</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for req in requests %}
+                            <tr>
+                                <td>
+                                    <strong>Path:</strong> {{ req.path }} <br/>
+                                    <strong>Headers:</strong> 
+                                    <ul>
+                                        {% for key, value in req.headers.items() %}
+                                            <li><strong>{{ key }}:</strong> {{ value }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>
+                                    <pre>{{ req.data }}</pre>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 {% else %}
                     <p>No requests received yet.</p>
                 {% endif %}
             </div>
+        </div>
     </div>
     <!-- Bootstrap JS (optional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -53,7 +65,7 @@ html_template = """
 @app.route('/', methods=['GET'])
 def index():
     # Display all received POST requests with headers, payloads, and paths
-    return render_template_string(html_template, requests=received_requests)
+    return render_template_string(html_template, requests=reversed(received_requests))
 
 # Use wildcard to capture any path under /receive
 @app.route('/api/<path:subpath>', methods=['POST'])
@@ -69,6 +81,9 @@ def receive_post(subpath):
         'data': data,
         'path': path
     })
+
+    if (len(received_requests) > 50):
+        received_requests.pop(0)
 
     return f'Request received on /receive/{subpath}', 200
 
