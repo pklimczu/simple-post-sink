@@ -22,8 +22,6 @@ html_template = """
 <body class="bg-light">
     <div class="container mt-5">
         <h1 class="mb-4">Received POST Requests</h1>
-        <div class="card">
-            <div class="card-body">
                 {% if requests %}
                     <table class="table table-bordered table-striped">
                         <thead class="thead-light">
@@ -55,8 +53,6 @@ html_template = """
                 {% else %}
                     <p>No requests received yet.</p>
                 {% endif %}
-            </div>
-        </div>
     </div>
     <!-- Bootstrap JS (optional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
