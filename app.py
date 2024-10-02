@@ -36,9 +36,7 @@ html_template = """
                                 <td colspan="2" class="font-monospace">[{{ req.date.strftime('%Y-%m-%d %H:%M:%S') }}] => {{ req.path }}</div></td>
                             </tr>
                             <tr>
-                                <td>
-                                    <pre>{{ req.data }}</pre>
-                                </td>
+                                <td class="font-monospace">{{ req.data }}</td>
                                 <td>
                                     <div class="font-monospace">
                                         {% for key, value in req.headers.items() %}
